@@ -107,17 +107,20 @@ for d in dtree:
 	for fc in dtree[d]['fchildren']:
 		for fn in fc:
 			if fc[fn]:
+				#print "Adding %s, %s" % (fc[fn], s)
 				s += fc[fn]
-	#if s:
-		#print "%d, %d" % (len(s), len(dtree[d]['fchildren']) * 32)
-	if len(s) == len(dtree[d]['fchildren']) * 32:
+	if s and len(s) == len(dtree[d]['fchildren']) * 32:
 		dtree[d]['hash'] = hashlib.md5(s).hexdigest()	
-		print d, s, hashlib.md5(s).hexdigest()
+		#print d, s, hashlib.md5(s).hexdigest()
 
+l = {}
 for d in dtree:
 	if dtree[d].has_key('hash'):
-		#print d, dtree[d]['hash']
-		pass
+		h = dtree[d]['hash']
+		if h in l:
+			print "=%s\n=%s\n" % (d, l[h])
+		else:
+			l[h] = d
 
 #pprint.pprint(dtree)
 
@@ -131,67 +134,3 @@ for d in dtree:
 
 #find_dir_dups(dtree)
 
-#pprint.pprint(dtree)
-
-
-#md5sums = {}
-#mdups = {}
-#print "Calculating hashes"
-#for d in dups:
-#	for f in dups[d]['r']:
-#		md = md5sum_from_filename(f)
-#		if md in md5sums:
-#			if md in mdups:
-#				mdups[md]['rc'] += 1
-#				mdups[md]['r'] += [f]
-#			else:
-#				mdups[md] = {'rc': 2, 'r': [sizes[sz], f]}
-#		else:
-#			md5sums[md] = f
-#
-##print "%d collisions found" % len(mdups)
-#
-#for d in mdups:
-#	rc = mdups[d]['rc']
-#	if rc > 5:
-#		pass
-#		#print mdups[d]
-#
-#dirtree = {}
-#hashtable = {}
-#fcount = 0
-#
-#for dirpath, dirnames, filenames in os.walk('/Users/hartleym/Code'):
-##for dirpath, dirnames, filenames in os.walk('/Users/hartleym/test/lsdup'):
-#	#print dirpath, dirnames, filenames
-#	dirtree[dirpath] = {}
-#	dirtree[dirpath]['dchildren'] = dirnames
-#	dirtree[dirpath]['fchildren'] = filenames
-#	fcount = fcount + len(filenames)
-#	#dirtreeI
-#
-#print "Read %d directories, %d files" % (len(dirtree), fcount)
-#
-#for d in dirtree:
-#	#for dc in dirtree[d]['dchildren']:
-#	#	print os.path.join(d, dc)
-#	dirtree[d]['dchildren'] = [os.path.join(d, dc) for dc in dirtree[d]['dchildren']]
-#	#for f in dirtree[d]['fchildren']:
-#	#	print [os.path.join(d, f) for f in dirtree[d]['fchildren']]
-#
-#hcount = 0
-#
-#for d in dirtree:
-#	for f in  dirtree[d]['fchildren']:
-#		md5sum = subprocess.check_output(["md5", "-q", os.path.join(d, f)])
-#		if md5sum in hashtable:
-#			#print os.path.join(d,f), "is", hashtable[md5sum]
-#			pass
-#			
-#		else:
-#			hashtable[md5sum] = os.path.join(d,f)
-#			hcount = hcount + 1
-#		#print md5sum.strip()
-#		print hcount, "/", fcount
-#
-##print dirtree
