@@ -5,6 +5,7 @@
 import os
 import sys
 from pprint import pprint
+import cPickle as pickle
 
 def build_dir_dict(path):
     """Generate a dictionary keyed by the dirnames in the tree. Values are a
@@ -17,7 +18,7 @@ def build_dir_dict(path):
                        'dirnames' : dirnames}
             for dirpath, dirnames, filenames
             in os.walk(path)
-            if len(dirnames + filenames)
+            if len(filenames)
             }
 
 def rekey(dd):
@@ -32,25 +33,32 @@ def rekey(dd):
         if new_key not in entryd:
             entryd[new_key] = entry
         else:
-            dupd[entry] = 1
+            dupd[entry] = vals
 
-    print len(dupd)
-
-    return entryd
+    return dupd
 
 def main():
     try:
         path = sys.argv[1]
     except IndexError:
-        path = 'test'
+        path = None
         
-    dd = build_dir_dict(path)
+    if path is not None:
+        dd = build_dir_dict(path)
+        with open('cache.p', 'wb') as f:
+            pickle.dump(dd, f)
+    else:
+        with open('cache.p') as f:
+            dd = pickle.load(f)
 
     #pprint(dd)
 
     dupd = rekey(dd)
 
-    print len(dd), len(dupd)
+    for path, data in dupd.items():
+        print os.stat(os.path.join(path, data['filenames'][0])).st_size
+
+    #pprint(dupd.keys())
 
 if __name__ == '__main__':
     main()
